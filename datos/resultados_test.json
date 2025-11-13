@@ -1,0 +1,7 @@
+{
+    "ventas_por_provincia_existente": "OK",
+    "ventas_por_provincia_inexistente": "OK",
+    "ventas_totales_como_diccionario": "OK",
+    "ventas_totales_mayores_5k": "FAIL: False is not true",
+    "ventas_totales_todas_las_provincias": "FAIL: 25 != 24"
+}

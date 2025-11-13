@@ -4,43 +4,59 @@ def main():
     archivo = "datos/sri_ventas_2024.csv"
     analizador = Analizador(archivo)
 
-    print("Ventas totales por provincia:")
+    print(" CONSULTA DE VENTAS POR PROVINCIA")
+
     resumen = analizador.ventas_totales_por_provincia()
-    
-    # Obtener y ordenar las provincias alfabéticamente
+
     provincias_ordenadas = sorted(resumen.keys())
-    
+    print("\nProvincias disponibles:")
     for prov in provincias_ordenadas:
-        total = resumen[prov]
-        print(f"\t{prov}: ${total:.2f}")
+        print(f" - {prov.capitalize()}")
 
-    print("\nCompras para una provincia")
-    
-    # 1. Obtener la lista de provincias válidas (en mayúsculas para un chequeo consistente)
-    provincias_validas = {prov.upper() for prov in resumen.keys()} 
-    
+    provincias_validas = {prov.upper() for prov in resumen.keys()}
     provincia = ""
-    provincia_formateada = "" # Para almacenar la provincia con el formato correcto
+    provincia_formateada = ""
 
-    # 2. Bucle de validación para pedir la provincia hasta que sea válida
+    # Bucle hasta que el usuario ingrese una provincia válida
     while provincia not in provincias_validas:
-        # Se pide la provincia y se convierte a mayúsculas para la validación
-        entrada = input("\tIngrese el nombre de una provincia: ")
-        provincia = entrada.strip().upper() 
-        
-        if provincia in provincias_validas:
-            # Encontramos el nombre original de la provincia (con la capitalización correcta)
+        entrada = input("\nIngrese el nombre de una provincia: ")
+        provincia = entrada.strip().upper()
+
+        if provincia not in provincias_validas:
+            print("⚠️ Provincia no válida. Intente nuevamente.")
+        else:
+            # Buscar el nombre correcto (con la capitalización original)
             for key in resumen.keys():
                 if key.upper() == provincia:
                     provincia_formateada = key
                     break
-        else:
-            # Si no es válida, no sale nada, solo se vuelve a pedir
-            pass 
-            
-    # Una vez que la provincia es válida y está en el formato correcto
+
+    # Mostrar ventas de la provincia seleccionada
     ventas = analizador.ventas_por_provincia(provincia_formateada)
-    print(f"\tVentas de {provincia_formateada}: ${ventas:,.2f}")
+    print(f"\n💰 Ventas totales en {provincia_formateada.capitalize()}: ${ventas:,.2f}")
+
+    opcion = input("\n¿Desea ver las estadísticas adicionales? (si/no): ").strip().lower()
+
+    if opcion in ("si", "sí", "s"):
+        print("Exportaciones totales por mes:")
+        exportaciones = analizador.exportaciones_totales_por_mes()
+        for mes, valor in exportaciones.items():
+            print(f"\t{mes}: ${valor:,.2f}")
+
+        print("Provincia con mayor volumen de importaciones:")
+        resultado = analizador.provincia_mayor_importacion()
+        if resultado:
+            provincia_max, total = resultado
+            print(f"\t{provincia_max.capitalize()}: ${total:,.2f}")
+        else:
+            print("No se encontraron datos de importaciones.")
+
+        print("Porcentaje promedio de ventas con tarifa 0% por provincia:")
+        porcentajes = analizador.porcentaje_tarifa_0_por_provincia()
+        for prov, porc in sorted(porcentajes.items()):
+            print(f"\t{prov.capitalize()}: {porc:.2f}%")
+    else:
+        print("Gracias por usar el analizador.")
 
 if __name__ == "__main__":
     main()
